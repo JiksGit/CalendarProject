@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document</title>
+  <style>
+    body { margin: 0; }
+    #wrapper { width: 1905px; height: 900px; }
+    #header { height: 55px; background-color: rgb(75, 55, 29); }
+    #container { height: 870px; background-color: green; }
+    #aside_nav { width: 225px; height: 100%; float: left; background-color: aqua; }
+    #content { width: 1680px; height: 100%; float: left; background-color: rgb(81, 179, 97); }
+    #content_header { height: 90px; background-color: aquamarine; }
+    #content_header h2 { display: inline-block; color: white; margin: 0px 5px; }
+    #content_header a { text-decoration: none; }
+    #holder_header { height: 90px; background-color: rgb(199, 255, 236); }
+    #date_print { height: 20px; background-color: yellow; position: relative; }
+    #content_section { height: 670px; background-color: rgb(234, 241, 124); position: relative; }
+    #footer { height: 28px; background-color: blue; }
+  </style>
+  <script src="./Cell.js"></script>
+  <script>
+    let cellArray = Array.from({ length: 6 }, () => Array(7).fill(0));
+    let restArray = []; // 공휴일 배열
+    let diaryArray = []; // 사용자 plan 배열
+    let currentYear;
+    let currentMonth;
+    let currentCell;
+
+    function getCurrentTime(year, month) {
+      let d = new Date(year, month);
+      currentYear = d.getFullYear();
+      currentMonth = d.getMonth();
+    }
+
+    function getStartDay(year, month) {
+      let d = new Date(year, month, 1);
+      return d.getDay();
+    }
+
+    function getLastDate(year, month) {
+      let d = new Date(year, month + 1, 0);
+      return d.getDate();
+    }
+
+    function checkData(cell, year, month, date) {
+      for (let k = 0; k < restArray.length; k++) {
+        let rest = restArray[k];
+       
+        if (rest.year == year && rest.month == month && rest.date == date) {
+          cell.restDiv.innerText = rest.title;
+          cell.restDiv.style.textAlign = "right";
+          cell.restDiv.style.color = "red";
+          cell.setDateColor("red");
+          // cell.renderIcon(rest.icon, 50); 공휴일은 스티커 제거
+        }
+      
+      }
+      for (let j=0; j< diaryArray.length; j++){
+        let diary = diaryArray[j];
+          if (diary.year == year && diary.month == month && diary.date == date) {
+           cell.titleDiv.innerText = diary.title;
+           cell.renderIcon(diary.icon, 50); //공휴일은 스티커 제거
+         }
+      }
+    }
+
+    function printNum() {
+      let index = 0;
+      let date = 1;
+      for (let i = 0; i < cellArray.length; i++) {
+        for (let j = 0; j < cellArray[0].length; j++) {
+          if (index >= getStartDay(currentYear, currentMonth) &&
+              date <= getLastDate(currentYear, currentMonth)) {
+            cellArray[i][j].setDate(currentYear, currentMonth, date);
+            cellArray[i][j].setDateColor("black"); // 공휴일 setRed 초기화
+            checkData(cellArray[i][j], currentYear, currentMonth, date);
+            date++;
+          }
+          if(j % 7 == 0 ) cellArray[i][j].setDateColor("red");
+          index++;
+        }
+      }
+    }
+
+    function clearCell() {
+      for (let i = 0; i < cellArray.length; i++) {
+        for (let j = 0; j < cellArray[0].length; j++) {
+          cellArray[i][j].numDiv.innerText = "";
+          cellArray[i][j].titleDiv.innerText = "";
+          cellArray[i][j].restDiv.innerText = "";
+            if (cellArray[i][j].iconDiv.children.length > 0) {
+              cellArray[i][j].iconDiv.removeChild(cellArray[i][j].icon);
+            }
+        }
+      }
+    }
+
+    function prev() {
+      getCurrentTime(currentYear, currentMonth - 1);
+      printTitle();
+      clearCell();
+      printNum();
+    }
+
+    function next() {
+      getCurrentTime(currentYear, currentMonth + 1);
+      printTitle();
+      clearCell();
+      printNum();
+    }
+
+    function createDayHeaders() {
+      let days = ['일', '월', '화', '수', '목', '금', '토'];
+      let container = document.getElementById("date_print");
+      let headerHeight = 20;
+      let c_width = 1680 / 7;
+
+      for (let i = 0; i < days.length; i++) {
+        let dayDiv = document.createElement("div");
+        if (i == 0) dayDiv.style.color = "red";
+        if (i == days.length - 1) dayDiv.style.color = "blue";
+        dayDiv.innerText = days[i];
+        dayDiv.style.position = "absolute";
+        dayDiv.style.left = `${i * c_width}px`;
+        dayDiv.style.top = "0px";
+        dayDiv.style.textAlign = "right";
+        dayDiv.style.padding = "0px 5px 0px 0px";
+        dayDiv.style.width = `${c_width}px`;
+        dayDiv.style.lineHeight = `${headerHeight}px`;
+        dayDiv.style.height = `${headerHeight}px`;
+        dayDiv.style.backgroundColor = "white";
+        dayDiv.style.borderTop = "1px solid lightgray";
+        dayDiv.style.borderLeft = "1px solid lightgray";
+        dayDiv.style.borderRight = "1px solid lightgray";
+        dayDiv.style.boxSizing = "border-box"; 
+        container.appendChild(dayDiv);
+      }
+    }
+
+    function printTitle() {
+      let inner = currentMonth < 9 ? ".0" : ".";
+      document.querySelector("#content_header h2").innerText =
+        `${currentYear}${inner}${currentMonth + 1}`;
+    }
+
+    function createCell() {
+      for (let i = 0; i < cellArray.length; i++) {
+        for (let j = 0; j < cellArray[0].length; j++) {
+          let c_width = 1680 / 7;
+          let c_height = 760 / 6;
+          let cell = new Cell(
+            document.getElementById("content_section"),
+            j * c_width, i * c_height,
+            c_width, c_height,
+            "white", "lightgray", 0
+          );
+          cellArray[i][j] = cell;
+        }
+      }
+    }
+
+    // 셀 보여주기
+    function cellPrint(){
+      document.getElementById("content_header").style.display ="block";
+      document.getElementById("date_print").style.display ="block";
+      document.getElementById("content_section").style.display ="block";
+      document.getElementById("holder_header").style.display ="none";
+      document.getElementById("holder").style.display ="none";
+    }
+
+    // 등록 폼 보여주기
+    function formPrint(obj){
+      document.getElementById("content_header").style.display ="none";
+      document.getElementById("date_print").style.display ="none";
+      document.getElementById("content_section").style.display ="none";
+      document.getElementById("holder_header").style.display ="block";
+      document.getElementById("holder").style.display ="block";
+
+      currentCell = obj;
+    }
+
+    // 일정 등록 폼
+    function regist(){
+      let diary = {
+        year : currentYear,
+        month : currentMonth,
+        date : currentCell.date,
+        title : form1.title.value,
+        place : form1.place.value,
+        description : form1.description.value,
+        icon: "./images/noteImg.png",
+      };
+      diaryArray.push(diary);
+      
+      form1.reset();
+      // div none 바꿔주기
+      cellPrint();
+      currentCell.titleDiv.innerText = diary.title;
+      currentCell.renderIcon(diary.icon, 50); //공휴일은 스티커 제거
+    }
+
+    addEventListener("load", function () {
+      let d = new Date();
+      getCurrentTime(d.getFullYear(), d.getMonth());
+      printTitle();
+      createDayHeaders();
+      createCell();
+
+      let bt_regist = document.querySelector("#holder input[type='button']");
+
+      bt_regist.addEventListener("click", function(){
+        regist();
+      });
+
+      fetch("./data.txt")
+        .then(response => response.text())
+        .then(text => {
+          let obj = JSON.parse(text);
+          restArray = obj.restList;
+          printNum();
+        })
+        .catch(err => {
+          console.error("공휴일 데이터 불러오기 실패", err);
+          printNum(); // 데이터가 없어도 출력은 해야 함
+        });
+
+    });
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <div id="header"></div>
+    <div id="container">
+      <div id="aside_nav"></div>
+      <div id="content">
+        <div id="content_header">
+          <a href="javascript:prev()">이전</a>
+          <h2>1999.02</h2>
+          <a href="javascript:next()">다음</a>
+        </div>
+        <div id="date_print" ></div> 
+        <div id="content_section" ></div>
+        <div id="holder_header"></div>
+        <div id="holder" style="display: none;">
+          <form name = "form1">
+            <span> 제목 </span><input type="text" name="title" placeholder="제목을 입력하세요" />
+            <span> 장소 </span><input type="text" name="place" placeholder="장소를 입력하세요" />
+            <!-- 일정도 바꿔줘야함 -> 일정 등록하면 해당 월로 출력까지 -->
+          <!-- <span> 스티커 </span><input type="text" name="description" placeholder="설명을 입력하세요" /> -->
+            <span> 설명 </span><input type="text" name="description" placeholder="설명을 입력하세요" />
+            <input type="button" value="v 저장" />
+            <input type="button" value="취소" />
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+    </div>
+  </div>
+</body>
+</html>

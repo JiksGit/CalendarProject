@@ -4,22 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Document</title>
-  <style>
-    body { margin: 0; }
-    #wrapper { width: 1905px; height: 900px; }
-    #header { height: 55px; background-color: rgb(75, 55, 29); }
-    #container { height: 870px; background-color: green; }
-    #aside_nav { width: 225px; height: 100%; float: left; background-color: aqua; }
-    #content { width: 1680px; height: 100%; float: left; background-color: rgb(81, 179, 97); }
-    #content_header { height: 90px; background-color: aquamarine; }
-    #content_header h2 { display: inline-block; color: white; margin: 0px 5px; }
-    #content_header a { text-decoration: none; }
-    #holder_header { height: 90px; background-color: rgb(199, 255, 236); }
-    #date_print { height: 20px; background-color: yellow; position: relative; }
-    #content_section { height: 670px; background-color: rgb(234, 241, 124); position: relative; }
-    #footer { height: 28px; background-color: blue; }
-  </style>
+  <link rel="stylesheet" href="style.css">
   <script src="./Cell.js"></script>
+  <script src="./MiniCell.js"></script>
   <script>
     let cellArray = Array.from({ length: 6 }, () => Array(7).fill(0));
     let restArray = []; // 공휴일 배열
@@ -61,7 +48,7 @@
         let diary = diaryArray[j];
           if (diary.year == year && diary.month == month && diary.date == date) {
            cell.titleDiv.innerText = diary.title;
-           cell.renderIcon(diary.icon, 50); //공휴일은 스티커 제거
+           cell.renderIcon(diary.icon, 35); //공휴일은 스티커 제거
          }
       }
     }
@@ -180,7 +167,46 @@
 
       currentCell = obj;
     }
+    
+    // 숨겨져 있던, 대화창을 띄우되, 그 위치는 지금 클릭한 바로 그 셀의 x,y를
+    // 따라가야함..
+    function openDialog(obj) {
+      console.log(obj);
+      // 현재 다이어로그에 대한 obj값
+        let dialog = document.getElementById("dialog");
+        dialog.style.display = "block";
+        
+        // 팝업의 위치는 사용자가 클릭한 셀의 좌표 바로 아래칸에  일치시키자
+        dialog.style.left = obj.x + "px";
+        dialog.style.top = obj.y + "px";
+        dialog.style.background = "gray";
+        
+        // 넘겨받은 x, y를 이용하여 새 창의 위치를 결정짓자
+        dialog.style.position = "absolute";
+        dialog.style.zIndex = 9999;
 
+        dialog.querySelector(".mini-popup h4").textContent = "일정";
+
+        dialog.querySelector(".mini-popup .info:nth-of-type(1)").innerHTML = `
+          <span class="label">제목:</span><br />
+          ${obj.title || "제목 없음"}
+        `;
+
+        dialog.querySelector(".mini-popup .info:nth-of-type(2)").innerHTML = `
+          <span class="label">장소:</span><br />
+          ${obj.place || "장소 없음"}
+        `;
+
+        dialog.querySelector(".mini-popup .info:nth-of-type(3)").innerHTML = `
+          <span class="label">메모:</span><br />
+          ${obj.description || "메모 없음"}
+        `;
+    }
+    
+    function closeDialog(){
+      document.getElementById("dialog").style.display = "none";
+    }
+      
     // 일정 등록 폼
     function regist(){
       let diary = {
@@ -192,14 +218,29 @@
         description : form1.description.value,
         icon: "./images/noteImg.png",
       };
+
+      // searchDiary() => 같은 날에 minicell이 있을 시 mn_y = 24;
+      let mn_y = 0; //  mn_y += 24;
+
+      let minicell = new MiniCell(
+          currentCell.titleDiv,
+          currentCell.x + 50, currentCell.y + 68 + mn_y,
+          "lightblue", "white", 
+          form1.title.value,
+          form1.place.value,
+          form1.description.value, currentCell.date
+      );
+      console.log(minicell);
+
       diaryArray.push(diary);
       
       form1.reset();
       // div none 바꿔주기
       cellPrint();
-      currentCell.titleDiv.innerText = diary.title;
-      currentCell.renderIcon(diary.icon, 50); //공휴일은 스티커 제거
+      // currentCell.titleDiv.innerText = diary.title;
+      currentCell.renderIcon(diary.icon, 35); //공휴일은 스티커 제거
     }
+
 
     addEventListener("load", function () {
       let d = new Date();
@@ -208,10 +249,13 @@
       createDayHeaders();
       createCell();
 
-      let bt_regist = document.querySelector("#holder input[type='button']");
-
-      bt_regist.addEventListener("click", function(){
+      document.getElementById("save_diary").addEventListener("click", function(){
         regist();
+      });
+
+        // 새 창 닫기 이벤트 구현
+      document.getElementById("delete-dial").addEventListener("click", () => {
+        closeDialog();
       });
 
       fetch("./data.txt")
@@ -239,19 +283,73 @@
           <a href="javascript:prev()">이전</a>
           <h2>1999.02</h2>
           <a href="javascript:next()">다음</a>
+          <button id="btn-today">오늘</button>
         </div>
         <div id="date_print" ></div> 
-        <div id="content_section" ></div>
+        <div id="content_section">
+          <div id="dialog" style="display: none;">
+             <div class="mini-popup">
+                <h4>일정</h4>
+                <div class="info">
+                  <span class="label">제목:</span><br />
+                  나는제목
+                </div>
+                <div class="info">
+                  <span class="label">장소:</span><br />
+                  나는장소
+                </div>
+                <div class="info">
+                  <span class="label">메모:</span><br />
+                  나는디테일
+                </div>
+                <button id="delete-dial">삭제</button>
+                <button id="detail-dial">상세 정보</button>
+            </div>  
+          </div>
+        </div>
         <div id="holder_header"></div>
         <div id="holder" style="display: none;">
-          <form name = "form1">
-            <span> 제목 </span><input type="text" name="title" placeholder="제목을 입력하세요" />
-            <span> 장소 </span><input type="text" name="place" placeholder="장소를 입력하세요" />
-            <!-- 일정도 바꿔줘야함 -> 일정 등록하면 해당 월로 출력까지 -->
-          <!-- <span> 스티커 </span><input type="text" name="description" placeholder="설명을 입력하세요" /> -->
-            <span> 설명 </span><input type="text" name="description" placeholder="설명을 입력하세요" />
-            <input type="button" value="v 저장" />
-            <input type="button" value="취소" />
+          <form id="event-form" name="form1">
+            <h3>새로운 일정 등록</h3>
+
+            <label>
+              제목  
+              <input type="text" name="title" placeholder="제목을 입력하세요" />
+            </label>
+
+            <label>
+              장소  
+              <select name="place">
+                <option value="">지역을 선택하세요</option>
+                <option value="서울특별시">서울특별시</option>
+                <option value="부산광역시">부산광역시</option>
+                <option value="대구광역시">대구광역시</option>
+                <option value="인천광역시">인천광역시</option>
+                <option value="광주광역시">광주광역시</option>
+                <option value="대전광역시">대전광역시</option>
+                <option value="울산광역시">울산광역시</option>
+                <option value="세종특별자치시">세종특별자치시</option>
+                <option value="경기도">경기도</option>
+                <option value="강원특별자치도">강원특별자치도</option>
+                <option value="충청북도">충청북도</option>
+                <option value="충청남도">충청남도</option>
+                <option value="전라북도">전라북도</option>
+                <option value="전라남도">전라남도</option>
+                <option value="경상북도">경상북도</option>
+                <option value="경상남도">경상남도</option>
+                <option value="제주특별자치도">제주특별자치도</option>
+              </select>
+            </label>
+
+            <label>
+              설명  
+              <textarea name="description" rows="5" placeholder="설명을 입력하세요"></textarea>
+            </label>
+
+            <div class="form-buttons">
+              <button type="button" class="save-btn" id="save_diary">💾 저장</button>
+              <button type="button" class="cancel-btn" onclick="closeHolder()">취소</button>
+            </div>
           </form>
         </div>
       </div>

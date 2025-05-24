@@ -8,7 +8,8 @@ class MiniCell {
     title,
     place,
     description,
-    date
+    date,
+    cell
   ) {
     // 다이어리 관련 내용
     this.title = title;
@@ -41,5 +42,10 @@ class MiniCell {
     });
 
     this.container.appendChild(this.div);
+
+    // 생성 후 셀에 등록
+    if (cell) {
+      cell.addMiniCell(this.div);
+    }
   }
 }

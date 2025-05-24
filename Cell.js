@@ -71,15 +71,21 @@ class Cell {
     this.div.appendChild(this.iconDiv);
     this.container.appendChild(this.div);
 
-    // 일정 제목을 누를 시 미니 창 생성
-    // this.titleDiv.addEventListener("click", (event) => {
-    //   event.stopPropagation(); // 상위 div 클릭 이벤트 방지
-    //   openDialog(this);
-    // });
+    this.miniCells = []; // MiniCell DOM 요소들을 저장할 배열
+
     // 셀을 누를 시에 등록 폼 생성
     this.div.addEventListener("click", () => {
       formPrint(this);
     });
+  }
+
+  addMiniCell(miniCellElement) {
+    this.miniCells.push(miniCellElement);
+  }
+
+  clearMiniCells() {
+    this.miniCells.forEach((el) => el.remove());
+    this.miniCells = [];
   }
 
   setDateColor(color) {

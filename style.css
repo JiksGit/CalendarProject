@@ -1,168 +1,262 @@
-body { margin: 0; }
-    #wrapper { width: 1905px; height: 900px; }
-    #header { height: 55px; background-color: rgb(75, 55, 29); }
-    #container { height: 870px; background-color: green; }
-    #aside_nav { width: 225px; height: 100%; float: left; background-color: aqua; }
-    #content { width: 1680px; height: 100%; float: left; background-color: rgb(81, 179, 97); }
-    #content_header { height: 90px; background-color: aquamarine; }
-    #content_header h2 { display: inline-block; color: black; margin: 0px 5px; }
-    #content_header a { text-decoration: none; }
-    #holder_header { height: 90px; background-color: rgb(199, 255, 236); }
+/* ===== 기본 구조 ===== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f7fa;
+  color: #2b2b2b;
+}
 
-    /* 등록 폼 css 시작 */
-    #holder {
-    position: absolute;
-    top: 150px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    padding: 20px;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    z-index: 9999;
-    }
+#wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    #event-form h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 20px;
-    color: #333;
-    text-align: center;
-    }
+#header {
+  height: 55px;
+  background-color: #3b4c66;
+}
 
-    #event-form label {
-    display: block;
-    margin-bottom: 15px;
-    font-size: 14px;
-    color: #333;
-    }
+#container {
+  flex: 1;
+  display: flex;
+  background-color: #f0f4f8;
+}
 
-    #event-form input[type="text"] {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    transition: border-color 0.2s;
-    }
+#aside_nav {
+  width: 225px;
+  background-color: #dde6ef;
+}
 
-    #event-form input[type="text"]:focus {
-    border-color: #4CAF50;
-    outline: none;
-    }
-    #event-form textarea {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    resize: vertical;
-    transition: border-color 0.2s;
-    }
+#content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-left: 1px solid #ccd5e0;
+}
 
-    #event-form textarea:focus {
-    border-color: #4CAF50;
-    outline: none;
-    }
+/* ===== 상단 헤더 영역 ===== */
+#content_header {
+  height: 60px;
+  background-color: #e1ecf4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* ↓ 아래 정렬 */
+  align-items: flex-start;   /* ← 왼쪽 정렬 */
+  padding: 12px 20px 8px 20px;
+  border-bottom: 1px solid #c4d2df;
+  box-sizing: border-box;
+}
 
-    #event-form select {
-    width: 100%;
-    padding: 8px 10px;
-    margin-top: 5px;
-    box-sizing: border-box;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    transition: border-color 0.2s;
-    }
+#content_header .left-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    #event-form select:focus {
-    border-color: #4CAF50;
-    outline: none;
-    }
+#content_header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2b3e50;
+}
 
+/* 버튼 스타일 */
+#content_header a,
+#btn-today {
+  background-color: #ffffff;
+  color: #2b3e50;
+  border: 1px solid #b0c4d4;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
 
-    .form-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    }
+#content_header a:hover,
+#btn-today:hover {
+  background-color: #dbe7f1;
+}
 
-    .save-btn, .cancel-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    }
+/* ===== 요일 헤더 ===== */
+#date_print {
+  height: 30px;
+  position: relative;
+  background-color: #eaf2fa;
+  border-bottom: 1px solid #c4d2df;
+}
 
-    .save-btn {
-    background-color: #4CAF50;
-    color: white;
-    }
+#date_print div {
+  background-color: #eaf2fa !important;
+  color: #2b3e50;
+  font-weight: bold;
+  text-align: center;
+  line-height: 30px;
+  border-right: 1px solid #d0dde8;
+}
 
-    .save-btn:hover {
-    background-color: #45a049;
-    }
-    
-    .cancel-btn {
-    background-color: #ccc;
-    color: #333;
-    }
+/* ===== 캘린더 셀 영역 ===== */
+#content_section {
+  flex: 1;
+  position: relative;
+  background-color: #ffffff;
+}
 
-    .cancel-btn:hover {
-    background-color: #b0b0b0;
-    }
-    /* 등록 폼 css 끝 */
-    
-    #date_print { height: 20px; background-color: yellow; position: relative; }
-    #content_section { height: 670px; background-color: rgb(234, 241, 124); position: relative; }
-    #footer { height: 28px; background-color: blue; }
+/* ===== Footer ===== */
+#footer {
+  height: 28px;
+  background-color: #dde6ef;
+}
 
+/* ===== 등록 폼 ===== */
+#holder {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
 
-    /* mini popup css */
-    .mini-popup {
-      width: 260px;
-      padding: 12px;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+#event-form h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+  color: #2b3e50;
+  text-align: center;
+}
 
-    .mini-popup h4 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
+#event-form label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #2b3e50;
+}
 
-    .mini-popup .info {
-      margin-bottom: 8px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
+#event-form input[type="text"],
+#event-form select,
+#event-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9fbfc;
+  color: #2b2b2b;
+}
 
-    .mini-popup .label {
-      font-weight: bold;
-    }
+#event-form input:focus,
+#event-form select:focus,
+#event-form textarea:focus {
+  border-color: #4fc3f7;
+  outline: none;
+}
 
-    .delete-btn {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 6px 12px;
-      background-color: #ff4d4f;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-    }
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
 
-    .delete-btn:hover {
-      background-color: #e04344;
-    }
+.save-btn,
+.cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background-color: #3b4c66;
+  color: #fff;
+}
+
+.save-btn:hover {
+  background-color: rgba(20, 74, 99, 0.582);
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background-color: #b0b0b0;
+}
+
+/* ===== 미니 팝업 ===== */
+.mini-popup {
+  width: 260px;
+  padding: 12px;
+  background-color: #ffffff;
+  border: 1px solid #b0c4d4;
+  border-radius: 8px;
+  color: #2b3e50;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.mini-popup h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.mini-popup .info {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.mini-popup .label {
+  font-weight: bold;
+  color: #4fc3f7;
+}
+
+.delete-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background-color: #ff4d4f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #e04344;
+}
+
+/* ===== MiniCell 스타일 ===== */
+.mini-cell {
+  width: 100%;
+  padding: 4px 8px;
+  margin: 2px 0;
+  font-size: 13px;
+  border-left: 4px solid #062533; /* 포인트 컬러는 JS에서 덮어써도 무방 */
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: #476581; /* 기본값 → JS가 덮어씀 */
+  color: #2b3e50;             /* 기본값 → JS가 덮어씀 */
+  transition: background-color 0.2s;
+}
+
+.mini-cell:hover {
+  background-color: #d9ecf5;
+}

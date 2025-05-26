@@ -4,46 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Document</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styleUpdate.css">
   <script src="./Cell.js"></script>
   <script src="./MiniCell.js"></script>
+  <script src="./DiaryCell.js"></script>
+  <script src="./common.js"></script>
+  <script src="./crud.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCe4PUIorwSDpG3ZZPLxaPjbWW4ICuNpFM&libraries=places" async defer></script>
+
   <script>
     let cellArray = Array.from({ length: 6 }, () => Array(7).fill(0));
+    let minicellArray = Array.from({ length: 6 }, () => Array(7).fill(0));
     let restArray = []; // 공휴일 배열
     let diaryArray = []; // 사용자 plan 배열
     let currentYear;
     let currentMonth;
+    let miniCurrentYear;
+    let miniCurrentMonth;
     let currentCell;
 
-    function getCurrentTime(year, month) {
-      let d = new Date(year, month);
-      currentYear = d.getFullYear();
-      currentMonth = d.getMonth();
-    }
-
-    function getStartDay(year, month) {
-      let d = new Date(year, month, 1);
-      return d.getDay();
-    }
-
-    function getLastDate(year, month) {
-      let d = new Date(year, month + 1, 0);
-      return d.getDate();
-    }
-
-    function checkData(cell, year, month, date) {
-      for (let k = 0; k < restArray.length; k++) {
-        let rest = restArray[k];
-       
-        if (rest.year == year && rest.month == month && rest.date == date) {
-          cell.restDiv.innerText = rest.title;
-          cell.restDiv.style.textAlign = "right";
-          cell.restDiv.style.color = "red";
-          cell.setDateColor("red");
-          // cell.renderIcon(rest.icon, 50); 공휴일은 스티커 제거
-        }
-      }
-    }
     function printIcon(cell, year, month, date){
       for (let j=0; j< diaryArray.length; j++){
         let diary = diaryArray[j];
@@ -62,8 +41,25 @@
               date <= getLastDate(currentYear, currentMonth)) {
             cellArray[i][j].setDate(currentYear, currentMonth, date);
             cellArray[i][j].setDateColor("black"); // 공휴일 setRed 초기화
-            checkData(cellArray[i][j], currentYear, currentMonth, date);
+            checkData(cellArray[i][j], "restDiv", currentYear, currentMonth, date);
             printIcon(cellArray[i][j], currentYear, currentMonth, date);
+            date++;
+          }
+          if(j % 7 == 0 ) cellArray[i][j].setDateColor("red");
+          index++;
+        }
+      }
+    }
+    function printMiniNum(){
+      let index = 0;
+      let date = 1;
+      for (let i = 0; i < minicellArray.length; i++) {
+        for (let j = 0; j < minicellArray[0].length; j++) {
+          if (index >= getStartDay(currentYear, currentMonth) &&
+              date <= getLastDate(currentYear, currentMonth)) {
+            minicellArray[i][j].setDate(currentYear, currentMonth, date);
+            minicellArray[i][j].setDateColor("black"); // 공휴일 setRed 초기화
+            checkData(minicellArray[i][j], "div", currentYear, currentMonth, date);
             date++;
           }
           if(j % 7 == 0 ) cellArray[i][j].setDateColor("red");
@@ -83,32 +79,9 @@
             }
         }
       }
+      document.getElementById("dialog").style.zIndex = -9999;
     }
 
-    function prev() {
-      getCurrentTime(currentYear, currentMonth - 1);
-      printTitle();
-      clearCell();
-      printNum();
-      miniCellPrint();
-    }
-
-    function now(){
-      let d = new Date();
-      getCurrentTime(d.getFullYear(), d.getMonth());
-      printTitle();
-      clearCell();
-      printNum();
-      miniCellPrint();
-    }
-
-    function next() {
-      getCurrentTime(currentYear, currentMonth + 1);
-      printTitle();
-      clearCell();
-      printNum();
-      miniCellPrint();
-    }
 
     function createDayHeaders() {
       let days = ['일', '월', '화', '수', '목', '금', '토'];
@@ -138,12 +111,6 @@
       }
     }
 
-    function printTitle() {
-      let inner = currentMonth < 9 ? ".0" : ".";
-      document.querySelector("#content_header h2").innerText =
-        `${currentYear}${inner}${currentMonth + 1}`;
-    }
-
     function createCell() {
       for (let i = 0; i < cellArray.length; i++) {
         for (let j = 0; j < cellArray[0].length; j++) {
@@ -158,6 +125,19 @@
           cellArray[i][j] = cell;
         }
       }
+      for (let i = 0; i < minicellArray.length; i++) {
+        for (let j = 0; j < minicellArray[0].length; j++) {
+          let m_width = 185 / 7;
+          let m_height = 180 / 6;
+          let m_cell = new MiniCell(
+            document.getElementById("mini_section"),
+            j * m_width, i * m_height,
+            m_width, m_height,
+            "white", "lightgray", 0
+          );
+          minicellArray[i][j] = m_cell;
+        }
+      }
     }
 
     function findCellByDate(date) {
@@ -170,13 +150,18 @@
       }
       return null;
     }
-
+    
+    function printTitle() {
+      let inner = currentMonth < 9 ? ".0" : ".";
+      document.querySelector("#content_header h2").innerText =
+        `${currentYear}${inner}${currentMonth + 1}`;
+    }
     // 셀 보여주기
-      function miniCellPrint() {
+    function diaryCellPrint() {
       // 먼저 전체 달력 초기화
       for (let i = 0; i < cellArray.length; i++) {
         for (let j = 0; j < cellArray[0].length; j++) {
-          cellArray[i][j].clearMiniCells(); // 미니셀 초기화
+          cellArray[i][j].cleardiaryCells(); // 미니셀 초기화
         }
       }
 
@@ -187,7 +172,7 @@
           const cell = findCellByDate(d.date); // 해당 날짜의 셀 찾기
 
           if (cell) {
-            let minicell = new MiniCell(
+            let diaryCell = new DiaryCell(
               cell.titleDiv,
               cell.x + 50,
               cell.y + 68,
@@ -211,33 +196,6 @@
       document.getElementById("holder").style.display ="none";
     }
     
-    function regist() {
-      const year = parseInt(form1.year.value);
-      const month = parseInt(form1.month.value);
-      const date = parseInt(form1.date.value);
-
-      if (!year || !month || !date) {
-        alert("년, 월, 일을 모두 선택해주세요.");
-        return;
-      }
-
-      const diary = {
-        year: year,
-        month: month-1,
-        date: date,
-        title: form1.title.value,
-        place: form1.place.value,
-        description: form1.description.value,
-        icon: "./images/noteImg.png",
-      };
-
-      diaryArray.push(diary);
-
-      form1.reset();
-
-      // holder 숨기고, 달력 리렌더링
-      miniCellPrint();
-    }
     
     
     // 등록 폼 보여주기
@@ -278,20 +236,64 @@
           <span class="label">장소:</span><br />
           ${obj.place || "장소 없음"}
         `;
+        // 📍 지도 출력
+        const geocoder = new google.maps.Geocoder();
+        const place = obj.place || "";
+
+        if (place !== "") {
+          document.getElementById("map").style.display= "block";
+          geocoder.geocode({ address: place }, (results, status) => {
+            if (status === "OK") {
+              const location = results[0].geometry.location;
+
+              const map = new google.maps.Map(document.getElementById("map"), {
+                center: location,
+                zoom: 12,
+              });
+
+              new google.maps.Marker({
+                map: map,
+                position: location,
+                title: place,
+              });
+            } else {
+              console.warn("Geocoding 실패:", status);
+              document.getElementById("map").innerHTML = "<p style='color:white;'>지도를 불러올 수 없습니다</p>";
+            }
+          });
+        } else {
+          document.getElementById("map").innerHTML = "<p style='color:white;'>장소 정보 없음</p>";
+          document.getElementById("map").style.display= "none";
+        }
 
         dialog.querySelector(".mini-popup .info:nth-of-type(3)").innerHTML = `
           <span class="label">메모:</span><br />
           ${obj.description || "메모 없음"}
         `;
 
+
         // 메모에서 상세페이지 보여주기
-        document.getElementById("detail-dial").addEventListener("click", () =>{
-          document.querySelector('input[name="title"]').value = obj.title;
-          document.querySelector('textarea[name="description"]').value = obj.description;
-          document.querySelector('select[name="place"]').value = obj.place;
-          
-          formPrint();
-        })
+     document.getElementById("detail-dial").addEventListener("click", () => {
+      formPrint(obj); // ⬅ 폼 먼저 보여주고
+
+      setTimeout(() => {
+        document.querySelector('input[name="title"]').value = obj.title;
+        document.querySelector('textarea[name="description"]').value = obj.description;
+        document.querySelector('select[name="place"]').value = obj.place;
+        document.querySelector('select[name="year"]').value = obj.year;
+        document.querySelector('select[name="month"]').value = obj.month + 1;
+        document.querySelector('select[name="date"]').value = obj.date;
+
+        document.getElementById("update_diary").onclick = () => {
+          update(obj);
+        };
+
+        // 버튼 상태 설정
+        document.getElementById("update_diary").style.display = "block";
+        document.getElementById("save_diary").style.display = "none";
+
+      }, 10); // 약간의 지연 → DOM 반영 이후 실행
+    });
     }
     
     function closeDialog(){
@@ -304,7 +306,7 @@
       printTitle();
       createDayHeaders();
       createCell(); 
-      miniCellPrint(); // 미니셸 보여주기
+      diaryCellPrint(); 
 
       document.getElementById("save_diary").addEventListener("click", function(){
         regist();
@@ -327,10 +329,12 @@
           let obj = JSON.parse(text);
           restArray = obj.restList;
           printNum();
+          printMiniNum();
         })
         .catch(err => {
           console.error("공휴일 데이터 불러오기 실패", err);
           printNum(); // 데이터가 없어도 출력은 해야 함
+          printMiniNum();
         });
 
     });
@@ -338,9 +342,33 @@
 </head>
 <body>
   <div id="wrapper">
-    <div id="header"></div>
+      <div id="header">
+        <div class="header-left">
+          <span class="logo">📅 My Calendar</span>
+        </div>
+        <div class="header-right">
+          <span class="user">환영합니다, 현직님</span>
+          <!-- 추후 아이콘, 설정 메뉴 추가 가능 -->
+        </div>
+      </div>
     <div id="container">
-      <div id="aside_nav"></div>
+      <div id="aside_nav">
+        <div id="mini_calendar">
+          <div class="mini-header">
+            <button class="mini-prev">◀</button>
+            <span class="mini-title">2025.05</span>
+            <button class="mini-next">▶</button>
+          </div>
+          <div class="mini-days">
+            <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+          </div>
+          <div class="mini-grid" id="mini_section">
+            <!-- 날짜 1~31일 동적으로 출력될 예정 -->
+            <!-- <div>1</div><div>2</div>... -->
+          </div>
+        </div>
+      </div>
+
       <div id="content">
         <div id="content_header">
           <div class="left-controls">
@@ -367,6 +395,7 @@
                   <span class="label">메모:</span><br />
                   나는디테일
                 </div>
+                <div id="map" style="width: 100%; height: 200px; margin-top: 10px;"></div>
                 <button id="close-dial">닫기</button>
                 <button id="detail-dial">상세 정보</button>
             </div>  
@@ -413,7 +442,7 @@
                   <option value="">년</option>
                   <script>
                     currentYear = new Date().getFullYear();
-                    for (let y = currentYear - 5; y <= currentYear + 5; y++) {
+                    for (let y = currentYear - 3; y <= currentYear + 3; y++) {
                       document.write(`<option value="${y}">${y}년</option>`);
                     }
                   </script>
@@ -445,6 +474,7 @@
 
             <div class="form-buttons">
               <button type="button" class="save-btn" id="save_diary">저장</button>
+              <button type="button" class="update-btn" id="update_diary" style="display: none;">변경</button>
               <button type="button" class="cancel-btn" onclick="form1.reset(); now();">취소</button>
             </div>
           </form>

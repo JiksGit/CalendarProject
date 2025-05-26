@@ -71,7 +71,7 @@ class Cell {
     this.div.appendChild(this.iconDiv);
     this.container.appendChild(this.div);
 
-    this.miniCells = []; // MiniCell DOM 요소들을 저장할 배열
+    this.diaryCells = []; // diaryCell DOM 요소들을 저장할 배열
 
     // 셀을 누를 시에 등록 폼 생성
     this.div.addEventListener("click", () => {
@@ -79,13 +79,13 @@ class Cell {
     });
   }
 
-  addMiniCell(miniCellElement) {
-    this.miniCells.push(miniCellElement);
+  adddiaryCell(diaryCellElement) {
+    this.diaryCells.push(diaryCellElement);
   }
 
-  clearMiniCells() {
-    this.miniCells.forEach((el) => el.remove());
-    this.miniCells = [];
+  cleardiaryCells() {
+    this.diaryCells.forEach((el) => el.remove());
+    this.diaryCells = [];
   }
 
   setDateColor(color) {

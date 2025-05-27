@@ -64,6 +64,7 @@
               const infoWindow = new google.maps.InfoWindow({
                   content: `
                   <div style="min-width: 250px; font-size: 14px;">
+                    <strong style="font-size: 15px; color: #333;">${item.post_sj}</strong><br/>
                     📍 ${item.new_address || "주소 없음"}<br/>
                     🕒 ${item.cmmn_use_time || "운영시간 정보 없음"}<br/>
                     ☎️ ${item.cmmn_telno || "전화번호 없음"}<br/>

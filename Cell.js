@@ -83,6 +83,43 @@ class Cell {
         document.querySelector('select[name="date"]').value = this.date;
       }, 10); // 약간의 지연 → DOM 반영 이후 실행
     });
+
+    /* 드랍 이벤트 */
+    this.div.addEventListener("dragover", (e) => {
+      e.preventDefault(); // drop 허용
+    });
+
+    this.div.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+
+      // 기존 일정 제거
+      const idx = diaryArray.findIndex(
+        (d) =>
+          d.title === data.title &&
+          d.date === data.date &&
+          d.month === data.month &&
+          d.year === data.year
+      );
+      if (idx !== -1) diaryArray.splice(idx, 1);
+
+      // 새 날짜로 이동
+      const newDiary = {
+        year: this.year,
+        month: this.month,
+        date: this.date,
+        bg: data.bg,
+        title: data.title,
+        place: data.place,
+        description: data.description,
+        icon: "./images/noteImg.png",
+      };
+      diaryArray.push(newDiary);
+      // 달력 갱신
+      clearCell();
+      printNum();
+      diaryCellPrint();
+    });
   }
 
   adddiaryCell(diaryCellElement) {

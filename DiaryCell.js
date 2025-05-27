@@ -22,7 +22,7 @@ class DiaryCell {
     this.container = container;
     this.x = x;
     this.y = y;
-    if(bg == "") bg = "gray";
+    if (bg == "") bg = "gray";
     this.bg = bg;
     this.borderColor = borderColor;
 
@@ -39,6 +39,25 @@ class DiaryCell {
     this.div.style.boxSizing = "border-box";
     this.div.style.position = "relative";
 
+    /* 드래그 이벤트 */
+    this.div.setAttribute("draggable", true);
+
+    this.div.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData(
+        "text/plain",
+        JSON.stringify({
+          title: this.title,
+          place: this.place,
+          description: this.description,
+          bg: this.bg,
+          date: this.date,
+          year: this.year,
+          month: this.month,
+        })
+      );
+    });
+
+    /* 클릭 이벤트 */
     this.div.addEventListener("click", (event) => {
       event.stopPropagation(); // 셀 클릭 막기
       openDialog(this);

@@ -137,124 +137,186 @@ body {
   background-color: #dde6ef;
 }
 
+
+
+
 /* ===== 등록 폼 ===== */
 #holder {
   position: absolute;
-  top: 120px;
+  top: 150px;
   left: 50%;
   transform: translateX(-50%);
   width: 340px;
-  padding: 20px;
+  padding: 24px;
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #d0d7de;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   z-index: 9999;
 }
 
+#event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
 #event-form h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 20px;
-  color: #2b3e50;
-  text-align: center;
+  margin: 0;
+  font-size: 18px;
+  color: #222;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
 }
 
 #event-form label {
+  font-size: 13px;
+  color: #333;
+  font-weight: 500;
   display: block;
-  margin-bottom: 15px;
-  font-size: 14px;
-  color: #2b3e50;
 }
 
 #event-form input[type="text"],
 #event-form select,
 #event-form textarea {
   width: 100%;
-  padding: 8px 10px;
-  margin-top: 5px;
-  box-sizing: border-box;
+  padding: 9px 10px;
   font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #f9fbfc;
-  color: #2b2b2b;
+  color: #1c1c1c;
+  border: 1px solid #d0d7de;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 #event-form input:focus,
 #event-form select:focus,
 #event-form textarea:focus {
-  border-color: #4fc3f7;
   outline: none;
+  border-color: #4fc3f7;
+  background-color: #ffffff;
+}
+
+#event-form textarea {
+  resize: vertical;
 }
 
 .form-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .save-btn,
-.cancel-btn,
-.update-btn {
-  padding: 8px 16px;
+.update-btn,
+.cancel-btn {
+  flex: 1;
+  padding: 10px;
+  font-size: 13px;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
   cursor: pointer;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
 }
 
 .save-btn {
-  background-color: #3b4c66;
+  background-color: #1976d2;
   color: #fff;
 }
 
 .save-btn:hover {
-  background-color: rgba(20, 74, 99, 0.582);
+  background-color: #155fa0;
 }
 
 .update-btn {
-  background-color: #3b4c66;
+  background-color: #4caf50;
   color: #fff;
 }
 
 .update-btn:hover {
-  background-color: rgba(20, 74, 99, 0.582);
+  background-color: #3d8c40;
 }
 
 .cancel-btn {
-  background-color: #ccc;
+  background-color: #e0e0e0;
   color: #333;
 }
 
 .cancel-btn:hover {
-  background-color: #b0b0b0;
+  background-color: #cacaca;
 }
+
 
 /* ===== 미니 팝업 ===== */
 .mini-popup {
-  width: 320px;
-  padding: 12px;
+  width: 280px;
+  padding: 20px;
   background-color: #ffffff;
-  border: 1px solid #b0c4d4;
-  border-radius: 8px;
-  color: #2b3e50;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: #333;
 }
 
 .mini-popup h4 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
 }
 
 .mini-popup .info {
-  margin-bottom: 8px;
-  font-size: 15px;
-  line-height: 1.4;
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 .mini-popup .label {
   font-weight: bold;
-  color: #4fc3f7;
+  color: #555;
+}
+
+.mini-popup #map {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 12px;
+}
+
+/* 버튼들 */
+.mini-popup button {
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#close-dial {
+  background-color: #e0e0e0;
+  color: #333;
+  margin-right: 6px;
+}
+
+#close-dial:hover {
+  background-color: #cfcfcf;
+}
+
+#detail-dial {
+  background-color: #1976d2;
+  color: white;
+}
+
+#detail-dial:hover {
+  background-color: #1565c0;
 }
 
 .delete-btn {
@@ -324,23 +386,26 @@ body {
   overflow: hidden;
 }
 
-/* MiniCell에 해당하는 div 스타일 */
+/* minicell 기본 구조 개선 */
 .mini-grid .mini-cell {
   position: absolute;
-  font-size: 11px;
-  text-align: right;
-  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2d3d;
+  background-color: #f4f6f8;
+  border: 1px solid #d0d7de;
   box-sizing: border-box;
-  border: 1px solid lightgray;
-  background-color: white;
-  color: black;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  border-radius: 2px; /* 더 모던한 느낌으로 최소한의 둥글기 */
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 .mini-grid .mini-cell:hover {
-  background-color: #e0f7fa;
+  background-color: #e6f0fa;
+  transform: scale(1.02); /* 마우스 호버 시 약간 확대 */
 }
 
 /* ===== MiniCell 스타일 ===== */

@@ -232,7 +232,7 @@ body {
 
 /* ===== 미니 팝업 ===== */
 .mini-popup {
-  width: 260px;
+  width: 320px;
   padding: 12px;
   background-color: #ffffff;
   border: 1px solid #b0c4d4;
@@ -248,7 +248,7 @@ body {
 
 .mini-popup .info {
   margin-bottom: 8px;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
 }
 

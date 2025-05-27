@@ -3,6 +3,11 @@ function regist() {
   const month = parseInt(form1.month.value);
   const date = parseInt(form1.date.value);
 
+  if (!form1.title.value) {
+    alert("제목을 입력하세요.");
+    return;
+  }
+
   if (!year || !month || !date) {
     alert("년, 월, 일을 모두 선택해주세요.");
     return;
@@ -23,8 +28,10 @@ function regist() {
 
   form1.reset();
 
+  getCurrentTime(diary.year, diary.month + 1);
+  prev();
   // holder 숨기고, 달력 리렌더링
-  diaryCellPrint();
+  // diaryCellPrint();
 }
 
 function update(obj) {
@@ -46,6 +53,7 @@ function update(obj) {
       obj.year == year &&
       obj.month == month - 1 &&
       obj.date == date &&
+      obj.bg == form1.color.value &&
       obj.title == form1.title.value &&
       obj.place == form1.place.value &&
       obj.description == form1.description.value
@@ -73,6 +81,7 @@ function update(obj) {
       year: year,
       month: month - 1,
       date: date,
+      bg: form1.color.value,
       title: form1.title.value,
       place: form1.place.value,
       description: form1.description.value,
@@ -87,7 +96,11 @@ function update(obj) {
     document.getElementById("save_diary").style.display = "block";
     document.getElementById("dialog").style.zIndex = -9999;
 
+    getCurrentTime(updateDiary.year, updateDiary.month + 1);
+    prev();
     // holder 숨기고, 달력 리렌더링
-    diaryCellPrint();
+    // clearCell();
+    // printNum();
+    // diaryCellPrint();
   }
 }

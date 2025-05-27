@@ -18,7 +18,6 @@ class MiniCell{
         this.div.style.border = "1px solid " + borderColor;
         this.div.style.position = "absolute";
         
-
         this.container.append(this.div);
     }
     setDateColor(color) {

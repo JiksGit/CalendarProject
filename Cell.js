@@ -76,6 +76,12 @@ class Cell {
     // 셀을 누를 시에 등록 폼 생성
     this.div.addEventListener("click", () => {
       formPrint(this);
+
+      setTimeout(() => {
+        document.querySelector('select[name="year"]').value = this.year;
+        document.querySelector('select[name="month"]').value = this.month + 1;
+        document.querySelector('select[name="date"]').value = this.date;
+      }, 10); // 약간의 지연 → DOM 반영 이후 실행
     });
   }
 

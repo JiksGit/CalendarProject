@@ -22,6 +22,7 @@ class DiaryCell {
     this.container = container;
     this.x = x;
     this.y = y;
+    if(bg == "") bg = "gray";
     this.bg = bg;
     this.borderColor = borderColor;
 

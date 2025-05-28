@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Document</title>
   <link rel="stylesheet" href="style.css">
-  <script src="./Cell.js"></script>
-  <script src="./MiniCell.js"></script>
-  <script src="./DiaryCell.js"></script>
-  <script src="./common.js"></script>
-  <script src="./crud.js"></script>
-  <script src="./printOrCreate.js"></script>
+  <script src="./js/Cell.js"></script>
+  <script src="./js/MiniCell.js"></script>
+  <script src="./js/DiaryCell.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/crud.js"></script>
+  <script src="./js/printOrCreate.js"></script>
+  <script src="./js/googleMap.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCe4PUIorwSDpG3ZZPLxaPjbWW4ICuNpFM&libraries=places" async defer></script>
 
   <script>
@@ -23,71 +24,6 @@
     let miniCurrentYear;
     let miniCurrentMonth;
     let currentCell;
-
-    function findCellByDate(date) {
-      for (let i = 0; i < cellArray.length; i++) {
-        for (let j = 0; j < cellArray[0].length; j++) {
-          if (cellArray[i][j].date === parseInt(date)) {
-            return cellArray[i][j];
-          }
-        }
-      }
-      return null;
-    }
-    
-    // Geocode, Food APi start
-    function geocodeDistrict(place, callback) {
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: `서울특별시 ${place}` }, function(results, status) {
-        if (status === "OK") {
-          const location = results[0].geometry.location;
-          callback(location);
-        } else {
-          alert("Geocoding 실패: " + status);
-        }
-      });
-    }
-    function showMarkersOnMap(locations, map) {
-        const geocoder = new google.maps.Geocoder();
-        locations.forEach(item => {
-          geocoder.geocode({ address: item.new_address }, (results, status) => {
-            if (status === "OK" && results[0]) {
-              const marker = new google.maps.Marker({
-                map: map,
-                position: results[0].geometry.location,
-                title: item.post_sj, // 포인터 마우스 올렸을때 표시되는 부분
-                icon: {
-                  url: "/images/food-marker.png",  // 당신이 준비한 아이콘 경로
-                  scaledSize: new google.maps.Size(25, 25)
-                }
-              });
-              const infoWindow = new google.maps.InfoWindow({
-                  content: `
-                  <div style="min-width: 250px; font-size: 14px;">
-                    <strong style="font-size: 15px; color: #333;">${item.post_sj}</strong><br/>
-                    📍 ${item.new_address || "주소 없음"}<br/>
-                    🕒 ${item.cmmn_use_time || "운영시간 정보 없음"}<br/>
-                    ☎️ ${item.cmmn_telno || "전화번호 없음"}<br/>
-                    🔗 <a href="${item.post_url}" target="_blank">상세보기</a>
-                  </div>
-                `,
-                ariaLabel: item.post_sj
-              });
-
-              marker.addListener("click", () => {
-                infoWindow.open(map, marker);
-              });
-            }
-          });
-        });
-      }
-
-    function filterByDistrict(jsonData, placeword){
-      return jsonData.DATA.filter(item => {
-        return item.new_address.includes(placeword);
-      });
-    }
-    // Geocode, Food APi end
     
     // 숨겨져 있던, 대화창을 띄우되, 그 위치는 지금 클릭한 바로 그 셀의 x,y를
     // 따라가야함..
@@ -124,13 +60,17 @@
           document.getElementById("map").style.display= "block";
           geocoder.geocode({ address: place }, (results, status) => {
             if (status === "OK") {
-              const location = results[0].geometry.location;
+              // geocoder가 반환해준 results의 geometry 정보 중 location 저장
+              const location = results[0].geometry.location; 
 
+              // map 출력
               const map = new google.maps.Map(document.getElementById("map"), {
                 center: location,
                 zoom: 13,
+                disableDefaultUI: true
               });
 
+              // 맵의 현재 지역 마커 출력
               new google.maps.Marker({
                 map: map,
                 animation: google.maps.Animation.DROP,
@@ -139,11 +79,14 @@
                 title: place,
               });
 
+              // ajax로 서울특별시 맛집 json 데이터를 비동기적으로 처리
               fetch("./seoulFood.json")
                 .then(res => res.json())
                 .then(json => {
+                  // json중에서 place 이름이 포함된 부분만 발췌
                   let filtered = filterByDistrict(json, place);
 
+                  // 
                   geocodeDistrict(place, (location) => {
                     map.setCenter(location);
                     showMarkersOnMap(filtered, map);
@@ -165,7 +108,6 @@
           ${obj.description || "메모 없음"}
         `;
 
-
         // 메모에서 상세페이지 보여주기
      document.getElementById("detail-dial").addEventListener("click", () => {
       formPrint(obj); // ⬅ 폼 먼저 보여주고
@@ -177,6 +119,7 @@
         document.querySelector('select[name="year"]').value = obj.year;
         document.querySelector('select[name="month"]').value = obj.month + 1;
         document.querySelector('select[name="date"]').value = obj.date;
+        document.querySelector('select[name="color"]').value = obj.bg;
 
         document.getElementById("update_diary").onclick = () => {
           update(obj);
@@ -203,6 +146,14 @@
       createCell(); 
       diaryCellPrint(); 
 
+      document.getElementById("food_search").addEventListener("click", function(){
+          window.open(
+          "http://127.0.0.1:5501/foodSearch.html",
+          "_blank",
+          "width=750px,height=750px,left=600px,top=138px;"
+        );
+      })
+
       document.getElementById("save_diary").addEventListener("click", function(){
         regist();
       });
@@ -221,8 +172,6 @@
         getCurrentTime(miniCurrentYear, miniCurrentMonth+1);
         prev();
       });
-
-
       document.getElementById("mini_prev").addEventListener("click", () =>{
         miniPrev();
       });
@@ -246,7 +195,7 @@
           printMiniNum();
         });
 
-    });
+    }); 
   </script>
 </head>
 <body>
@@ -254,6 +203,9 @@
       <div id="header">
         <div class="header-left">
           <span class="logo">📅 My Calendar</span>
+        </div>
+        <div>
+          <button id="food_search">맛집검색</button>
         </div>
         <div class="header-right">
           <span class="user">환영합니다, 현직님</span>

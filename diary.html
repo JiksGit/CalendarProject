@@ -24,6 +24,7 @@
     let miniCurrentYear;
     let miniCurrentMonth;
     let currentCell;
+    let st;
     
     // 숨겨져 있던, 대화창을 띄우되, 그 위치는 지금 클릭한 바로 그 셀의 x,y를
     // 따라가야함..
@@ -52,7 +53,7 @@
           <span class="label">장소:</span><br />
           ${obj.place || "장소 없음"}
         `;
-        // 📍 지도 출력
+        //  지도 출력
         const geocoder = new google.maps.Geocoder();
         const place = obj.place || ""; // 강남구
 
@@ -84,7 +85,7 @@
                 .then(res => res.json())
                 .then(json => {
                   // json중에서 place 이름이 포함된 부분만 발췌
-                  let filtered = filterByDistrict(json, place);
+                  let filtered = filterByWord(json, place);
 
                   // 
                   geocodeDistrict(place, (location) => {
@@ -132,9 +133,68 @@
       }, 10); // 약간의 지연 → DOM 반영 이후 실행
     });
     }
+
+    function restPrint(){
+    let tag = "<table>";
+    tag += "<tr><th>월</th><th>일</th><th>이름</th></tr>";
+
+    for(let i=0; i < restArray.length; i++){
+      let rest = restArray[i];
+      tag += "<tr>";
+        tag += `<td style="color:red">${rest.month + 1}</td>`;
+        tag += `<td style="color:red">${rest.date}</td>`;
+        tag += `<td style="color:black">${rest.title}</td>`;
+        tag += "</tr>";
+      }
+      
+      tag += "</table>";
+      document.getElementById("rest-div").innerHTML = tag;
+    }
+    
+    function diaryPrint(){
+      let tag = "<table>";
+      tag += "<tr><th>월</th><th>일</th><th>이름</th></tr>";
+      
+      diaryArray.sort((a, b) => {
+        if(a.month == b.month) return a.date - b.date;
+        else return a.month - b.month;
+      });
+      for(let i=0; i < diaryArray.length; i++){
+        let diary = diaryArray[i];
+        tag += "<tr>";
+          tag += `<td style="color:black">${diary.month + 1}</td>`;
+          tag += `<td style="color:black">${diary.date}</td>`;
+          tag += `<td style="color:blue">${diary.title}</td>`;
+          tag += "</tr>";
+        }
+      if(diaryArray.length == 0){
+        tag = `<h3 style="textAlign: center">일정을 추가하세요<h3>`;
+      }
+        
+      tag += "</table>";
+      document.getElementById("rest-div").innerHTML = tag;
+    }
     
     function closeDialog(){
       document.getElementById("dialog").style.display = "none";
+    }
+
+    // 공휴일 버튼 누를 때 날짜 출력
+    function restRoop(){
+      document.getElementById("restPrint_btn").addEventListener("click", function(){
+          st = 1;
+      })
+      if(st == 1)
+      restPrint();
+    }
+        
+    function diaryRoop(){
+      // 공휴일 버튼 누를 때 날짜 출력
+      document.getElementById("diaryPrint_btn").addEventListener("click", function(){
+        st = 2;
+      })
+      if(st == 2)
+      diaryPrint();
     }
 
     addEventListener("load", function () {
@@ -150,13 +210,17 @@
           window.open(
           "http://127.0.0.1:5501/foodSearch.html",
           "_blank",
-          "width=750px,height=750px,left=600px,top=138px;"
+          "width=750px,height=560px,left=600px,top=138px;"
         );
       })
 
       document.getElementById("save_diary").addEventListener("click", function(){
         regist();
       });
+
+      setInterval(diaryRoop, 10);
+      setInterval(restRoop, 10);
+
 
       // 새 창 닫기 이벤트 구현
       document.getElementById("close-dial").addEventListener("click", () => {
@@ -226,6 +290,14 @@
           <div class="mini-grid" id="mini_section">
             <!-- 날짜 1~31일 동적으로 출력될 예정 -->
             <!-- <div>1</div><div>2</div>... -->
+          </div>
+        </div>
+        <div>
+          <div>
+            <button id="restPrint_btn">공휴일 출력</button>
+            <button id="diaryPrint_btn">일정 출력</button>
+            <div id="rest-div">
+            </div>
           </div>
         </div>
       </div>

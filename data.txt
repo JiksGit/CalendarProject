@@ -84,6 +84,15 @@
     {
       "year": 2025,
       "month": 5,
+      "date": 3,
+      "title": "대통령선거일",
+      "place": "",
+      "description": "",
+      "icon": "./noteImg.png"
+    },
+    {
+      "year": 2025,
+      "month": 5,
       "date": 6,
       "title": "현충일",
       "place": "",
@@ -157,7 +166,7 @@
       "year": 2025,
       "month": 11,
       "date": 25,
-      "title": "기독탄신일",
+      "title": "크리스마스",
       "place": "",
       "description": "",
       "icon": "./noteImg.png"

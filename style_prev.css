@@ -37,6 +37,27 @@ body {
   color: #dddddd;
 }
 
+#food_search {
+  background-color: #458ed8;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 400;  /* 기존보다 얇게 */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+#food_search:hover {
+  background-color: #1565c0;
+  transform: translateY(-1px);
+}
+#food_search:active {
+  background-color: #0d47a1;
+  transform: translateY(0);
+}
+
 
 #container {
   flex: 1;
@@ -52,6 +73,46 @@ body {
   color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
 }
+
+#rest-div table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 13px;
+  background-color: #ffffff;
+  line-height: 120%;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+#rest-div th,
+#rest-div td {
+  padding: 5px 6px; 
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#rest-div th {
+  background-color: #2b3e50;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+#rest-div tr:last-child td {
+  border-bottom: none;
+}
+
+#rest-div tr:hover {
+  background-color: #f5f7fa;
+}
+
+#rest-div td:first-child,
+#rest-div td:nth-child(2) {
+  color: #1976d2;
+  font-weight: 500;
+}
+
 
 #content {
   flex: 1;
@@ -342,6 +403,34 @@ body {
   box-sizing: border-box;
 }
 
+#mini_calendar + div {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;  /* 가로정렬 */
+  gap: 8px;              /* 버튼 간 간격 */
+  justify-content: center;
+  align-items: center;
+}
+
+#mini_calendar + div button {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+  background-color: #ffffff;
+  color: #2c3e50;
+  border: 1px solid #cfd8dc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#mini_calendar + div button:hover {
+  background-color: #e3f2fd;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+
+
 .mini-header {
   display: flex;
   justify-content: space-between;
@@ -354,6 +443,8 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
+
+
 
 .mini-header button {
   background: none;
@@ -399,7 +490,7 @@ body {
   border: 1px solid #d0d7de;
   box-sizing: border-box;
   cursor: pointer;
-  border-radius: 2px; /* 더 모던한 느낌으로 최소한의 둥글기 */
+  border-radius: 4px; /* 더 모던한 느낌으로 최소한의 둥글기 */
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 

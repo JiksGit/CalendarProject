@@ -6,15 +6,16 @@
         return item.new_address.includes(placeword);
       });
     }
+
     function filterByWord(jsonData, word) {
-        return jsonData.DATA.filter(item => {
+        return jsonData.DATA.filter(item => { // jsonData에서 각각의 item을 filter로 받아옴
             const addr = item.new_address || "";
             const menu = item.fd_reprsnt_menu || "";
-            return addr.includes(word) || menu.includes(word);
+            return addr.includes(word) || menu.includes(word); // item에서 word가 포함될 경우 return
         });
     }
 
-    // 두번째) 강남구 -> 서울특별시 강남구로 geocoder location을 다시 반환
+    // 두번째) 서울특별시 강남구 -> results 배열 안 geometry.location{latitude, longitude} 발췌 
     function geocodeDistrict(place, callback) {
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode({ address: `서울특별시 ${place}` }, function(results, status) {
@@ -37,7 +38,7 @@
                 position: results[0].geometry.location,
                 title: item.post_sj, // 포인터 마우스 올렸을때 표시되는 부분
                 icon: {
-                  url: "/images/food-marker.png",  // 당신이 준비한 아이콘 경로
+                  url: "/images/food-marker.png",
                   scaledSize: new google.maps.Size(25, 25)
                 }
               });

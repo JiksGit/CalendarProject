@@ -12,11 +12,11 @@
     <script src="./js/googleMap.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCe4PUIorwSDpG3ZZPLxaPjbWW4ICuNpFM&libraries=places" async defer></script>
     <script>
+        const seoulCenter = { lat: 37.5665, lng: 126.9780 };
 
         function search(){
             // 지도 출력
             const geocoder = new google.maps.Geocoder();
-            const seoulCenter = { lat: 37.5665, lng: 126.9780 };
             const map = new google.maps.Map(document.getElementById("map"), {
                 center: seoulCenter,
                 zoom: 12,
@@ -24,6 +24,7 @@
             });
 
             const place = form_s.search.value || ""; // 강남구
+            console.log(place);
             
              if (place !== "") {
                 fetch("./seoulFood.json")
@@ -34,14 +35,29 @@
                     });
                 }else {
                     document.getElementById("map").innerHTML = "<p style='color:white;'>장소 정보 없음</p>";
-                }
             }
+            form_s.search.value = "";
+        }
         
         
         addEventListener("load", function(){
+            
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: seoulCenter,
+                zoom: 12,
+                disableDefaultUI: true
+            });
             document.getElementById("search_bt").addEventListener("click", function(){
                 search();
             });
+            document.getElementById("search").addEventListener("keydown", (e) =>{
+                e.preventDefault();
+                // console.log(e.keyCode);
+                if(e.keyCode == 13){
+                    search();
+
+                }
+            })
         })
     </script>
 </head>
